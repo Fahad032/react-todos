@@ -61,7 +61,7 @@ class Todos extends Component
 		// note: sperad operator operates from reverse order
 		// it will take on map() results 
 		// and make it 1, 2, 3, 4, 5 form [1, 2, 3, 4, 5]
-		newTask.id = Math.max(...tasks.map(task => task.id)) + 1;
+		newTask.id = Math.max(...tasks.map(task => task.id), 1) + 1;
 		tasks.unshift(newTask);		
 		this.setState({tasks:tasks});
 
@@ -87,8 +87,9 @@ class Todos extends Component
 	}
 
 	handleClearCompleated(){
-		var completed = [];
-		this.setState({ completed: completed });
+		let tasks = [...this.state.tasks];
+		tasks = tasks.filter(task => !task.isComplete);
+		this.setState({ tasks: tasks });
 	}
 
 	render(){
@@ -108,7 +109,8 @@ class Todos extends Component
 							   		<div className="form-group form-inline">
 							   			<input 
 							   				type="text" 
-							   				name="todo" 
+							   				name="task"
+							   				placeholder="todo.." 
 							   				className="form-control input-sm"
 							   				value={this.state.newTask.title}
 							   				onChange={(e) => this.handleChange(e)} 
