@@ -13,6 +13,10 @@ library.add(faTrash, faCoffee, faCheck)
 class Todos extends Component
 {
 	state = {
+		newTask: {
+			title: '',
+			isComplete: false
+		},
 		tasks: [
 			{ 
 				id: 1,
@@ -44,16 +48,31 @@ class Todos extends Component
 		//incomplete: []
 	}
 
+	handleChange(e){
+		let task = this.state.newTask;
+		task.title = e.target.value;
+		this.setState({newTask: task});
+	}
+
 	handleCreateTask(){
 		const tasks = [...this.state.tasks];
-		//console.log('handleCreateTask called', tasks);
-		
-		tasks.unshift({
-			id: tasks.length + 1,
-			title: 'New Task Added',
+		let newTask = {...this.state.newTask};
+		if(!newTask.title.trim().length){
+			return;
+		}
+		// note: sperad operator operates from reverse order
+		// it will take on map() results 
+		// and make it 1, 2, 3, 4, 5 form [1, 2, 3, 4, 5]
+		newTask.id = Math.max(...tasks.map(task => task.id)) + 1;
+		tasks.unshift(newTask);		
+		this.setState({tasks:tasks});
+
+		// reset new task
+		this.setState({newTask: {
+			id: undefined,
+			title: '',
 			isComplete: false
-		});
-		this.setState({tasks:tasks});		
+		}})		
 	}
 
 	handleDelete(task){
@@ -100,16 +119,25 @@ class Todos extends Component
 					   <div className="col-12">
 						   <hr />
 						   <div className="row">
-							   	<div className="col-8">
+							   	<div className="col-5">
 							   		<h3>Todos <small>(On Queue)</small></h3>
 							   	</div>	
-							   	<div className="col-4">
-							   		<button 
-							   			className="btn btn-info float-right"
-							   			onClick={()=> this.handleCreateTask()}
-							   		>
-							   			Create
-							   		</button>
+							   	<div className="col-7">
+							   		<div className="form-group form-inline">
+							   			<input 
+							   				type="text" 
+							   				name="todo" 
+							   				className="form-control input-sm"
+							   				value={this.state.newTask.title}
+							   				onChange={(e) => this.handleChange(e)} 
+							   			/>
+								   		<button 
+								   			className="btn btn-info float-right"
+								   			onClick={()=> this.handleCreateTask()}
+								   		>
+								   			Create
+								   		</button>
+								   	</div>	
 							   	</div>	
 						   </div>
 						   <hr />			   		
