@@ -44,8 +44,6 @@ class Todos extends Component
 				isComplete: false
 			}
 		],
-		completed: [],
-		//incomplete: []
 	}
 
 	handleChange(e){
@@ -82,26 +80,10 @@ class Todos extends Component
 
 	hanldeToggleComplete(task){
 		const tasks = [...this.state.tasks];
-		const completed = [...this.state.completed];
+		let taskToUpdate = tasks.find(item => item.id === task.id);
 		
-		// TODO: find a better way to refactor
-		if(!task.isComplete){
-			let taskToUpdate = tasks.find(item => item.id === task.id);
-				taskToUpdate.isComplete = !taskToUpdate.isComplete; // true
-
-			tasks.splice(tasks.indexOf(taskToUpdate) , 1);
-			completed.push(taskToUpdate);
-
-		}else{
-			let taskToUpdate = completed.find(item => item.id === task.id);
-				taskToUpdate.isComplete = !taskToUpdate.isComplete; // false
-
-			completed.splice(completed.indexOf(taskToUpdate) , 1);
-			tasks.push(taskToUpdate);
-		}
-
+		taskToUpdate.isComplete = !taskToUpdate.isComplete;
 		this.setState({ tasks: tasks });
-		this.setState({ completed: completed });
 	}
 
 	handleClearCompleated(){
@@ -145,7 +127,7 @@ class Todos extends Component
 					   	<div className="col-12">
 							<ul className="list-group">
 								{
-									this.state.tasks.map((task) => <Todo 
+									this.state.tasks.filter( task => !task.isComplete).map((task) => <Todo 
 										key={task.id} 
 										task={task} 
 										onDelete={
@@ -185,7 +167,7 @@ class Todos extends Component
 					   	<div className="col-12">
 							<ul className="list-group">
 								{
-									this.state.completed.map((task) => <Todo 
+									this.state.tasks.filter(task => task.isComplete).map((task) => <Todo 
 										key={task.id} 
 										task={task} 
 										onDelete={
